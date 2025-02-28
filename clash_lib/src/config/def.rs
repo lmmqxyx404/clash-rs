@@ -38,7 +38,7 @@ impl Default for DnsHijack {
 #[serde(rename_all = "kebab-case")]
 pub struct TunConfig {
     pub enable: bool,
-    #[serde(alias = "device-url")]
+    #[serde(alias = "device-url", alias = "device")]
     pub device_id: String,
     /// tun interface address
     #[serde(default = "default_tun_address")]
@@ -585,6 +585,24 @@ mod tests {
     use crate::config::def::Port;
 
     use super::Config;
+
+    #[test]
+    fn parse_tun() {
+        let cfg = r#"
+tun:
+  auto-detect-interface: true
+  auto-route: true
+  device: Mihomo
+  dns-hijack:
+    - any:53
+  mtu: 1500
+  stack: gvisor
+  strict-route: false
+  enable: false
+        "#;
+        let c = cfg.parse::<Config>().expect("should parse");
+        // assert_eq!(c.port, Some(Port(9090)));
+    }
 
     #[test]
     fn parse_simple() {
